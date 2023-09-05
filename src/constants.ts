@@ -2,6 +2,7 @@ import * as core from '@actions/core'
 import {config as dotEnvConfig} from 'dotenv'
 dotEnvConfig()
 import {Octokit} from '@octokit/rest'
+import {endpoint} from '@octokit/endpoint'
 import {Toolkit} from 'actions-toolkit'
 import type {pullRequestWebhook} from './types'
 
@@ -14,9 +15,12 @@ const isGitHubActions = process.env.GITHUB_ACTIONS
 const githubToken =
   isGitHubActions && !areTesting ? core.getInput('repo-token', {required: true}) : process.env.GITHUB_TOKEN
 
+const githubBaseUrl = process.env.GITHUB_API_URL || endpoint.DEFAULTS.baseUrl
+
 const octokit = new Octokit({
   previews: ['antiope'],
   auth: githubToken,
+  baseUrl: githubBaseUrl,
 })
 
 const tools = new Toolkit({
